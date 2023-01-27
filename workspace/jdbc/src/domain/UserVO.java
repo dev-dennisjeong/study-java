@@ -12,6 +12,7 @@ public class UserVO {
 	private String userBirth;
 	private String userGender;
 	private String userRecommenderId;
+//	private Long recommendCount;
 	
 	public UserVO() {;}
 
@@ -110,4 +111,21 @@ public class UserVO {
 				+ ", userEmail=" + userEmail + ", userAddress=" + userAddress + ", userBirth=" + userBirth
 				+ ", userGender=" + userGender + ", userRecommenderId=" + userRecommenderId + "]";
 	}
+
+//	public Long getRecommendCount() {
+//		return recommendCount;
+//	}
+//
+//	public void setRecommendCount(Long recommendCount) {
+//		this.recommendCount = recommendCount;
+//	}
+
+//	@Override
+//	public String toString() {
+//		return "UserVO [userId=" + userId + ", userIdentification=" + userIdentification + ", userName=" + userName
+//				+ ", userPassword=" + userPassword + ", userPhone=" + userPhone + ", userNickname=" + userNickname
+//				+ ", userEmail=" + userEmail + ", userAddress=" + userAddress + ", userBirth=" + userBirth
+//				+ ", userGender=" + userGender + ", userRecommenderId=" + userRecommenderId + ", recommendCount="
+//				+ recommendCount + "]";
+//	}
 }

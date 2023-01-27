@@ -10,11 +10,11 @@ import domain.BoardDTO;
 import domain.BoardVO;
 
 public class BoardDAO {
-	public Connection connection; // 연결 객체
-	public PreparedStatement preparedStatement; // 쿼리 관리 객체
-	public ResultSet resultSet; // 결과 테이블 객체
-
-//   게시글 추가
+	public Connection connection; //연결 객체
+	public PreparedStatement preparedStatement; //쿼리 관리 객체
+	public ResultSet resultSet; //결과 테이블 객체
+	
+//	게시글 추가
 	public void insert(BoardVO boardVO) {
 		String query = "INSERT INTO TBL_BOARD"
 				+ "(BOARD_ID, BOARD_TITLE, BOARD_CONTENT, BOARD_REGISTER_DATE, BOARD_UPDATE_DATE, USER_ID) "
@@ -32,10 +32,10 @@ public class BoardDAO {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (preparedStatement != null) {
+				if(preparedStatement != null) {
 					preparedStatement.close();
 				}
-				if (connection != null) {
+				if(connection != null) {
 					connection.close();
 				}
 			} catch (SQLException e) {
@@ -43,15 +43,15 @@ public class BoardDAO {
 			}
 		}
 	}
-
-//   게시글 조회
+//	게시글 조회
 	public BoardDTO select(Long boardId) {
 		String query = "SELECT BOARD_ID, BOARD_TITLE, BOARD_CONTENT, BOARD_REGISTER_DATE, "
 				+ " BOARD_UPDATE_DATE, U.USER_ID, USER_IDENTIFICATION, USER_NAME, USER_PASSWORD, "
 				+ " USER_PHONE, USER_NICKNAME, USER_EMAIL, USER_ADDRESS, USER_BIRTH, USER_GENDER, "
-				+ " USER_RECOMMENDER_ID " + "FROM TBL_USER U JOIN TBL_BOARD B "
+				+ " USER_RECOMMENDER_ID "
+				+ "FROM TBL_USER U JOIN TBL_BOARD B "
 				+ "ON U.USER_ID = B.USER_ID AND BOARD_ID = ?";
-
+		
 		BoardDTO boardDTO = null;
 		int index = 0;
 		connection = DBConnecter.getConnection();
@@ -59,7 +59,7 @@ public class BoardDAO {
 			preparedStatement = connection.prepareStatement(query);
 			preparedStatement.setLong(1, boardId);
 			resultSet = preparedStatement.executeQuery();
-			if (resultSet.next()) {
+			if(resultSet.next()) {
 				boardDTO = new BoardDTO();
 				boardDTO.setBoardId(resultSet.getLong(++index));
 				boardDTO.setBoardTitle(resultSet.getString(++index));
@@ -84,24 +84,23 @@ public class BoardDAO {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (resultSet != null) {
+				if(resultSet != null) {
 					resultSet.close();
 				}
-				if (preparedStatement != null) {
+				if(preparedStatement != null) {
 					preparedStatement.close();
 				}
-				if (connection != null) {
+				if(connection != null) {
 					connection.close();
 				}
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}
 		}
-
+		
 		return boardDTO;
 	}
-
-//   게시글 수정
+//	게시글 수정
 	public void update(BoardVO boardVO) {
 		String query = "UPDATE TBL_BOARD SET BOARD_TITLE = ?, BOARD_CONTENT = ?, BOARD_UPDATE_DATE = SYSDATE "
 				+ "WHERE BOARD_ID = ?";
@@ -118,10 +117,10 @@ public class BoardDAO {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (preparedStatement != null) {
+				if(preparedStatement != null) {
 					preparedStatement.close();
 				}
-				if (connection != null) {
+				if(connection != null) {
 					connection.close();
 				}
 			} catch (SQLException e) {
@@ -129,43 +128,46 @@ public class BoardDAO {
 			}
 		}
 	}
-
-//   게시글 삭제
+	
+//	게시글 삭제
 	public void delete(Long boardId) {
 		String query = "DELETE FROM TBL_BOARD WHERE BOARD_ID = ?";
-
+		
 		connection = DBConnecter.getConnection();
 		try {
 			preparedStatement = connection.prepareStatement(query);
 			preparedStatement.setLong(1, boardId);
 			preparedStatement.executeUpdate();
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (preparedStatement != null) {
+				if(preparedStatement != null) {
 					preparedStatement.close();
 				}
-				if (connection != null) {
+				if(connection != null) {
 					connection.close();
 				}
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}
 		}
-
+		
 	}
-
-//   게시글 전체 조회
-	public ArrayList<BoardDTO> selectAll() {
+	
+//	게시글 전체 조회
+	public ArrayList<BoardDTO> selectAll(){
 		String query = "SELECT BOARD_ID, BOARD_TITLE, BOARD_CONTENT, BOARD_REGISTER_DATE, "
 				+ " BOARD_UPDATE_DATE, U.USER_ID, USER_IDENTIFICATION, USER_NAME, USER_PASSWORD, "
 				+ " USER_PHONE, USER_NICKNAME, USER_EMAIL, USER_ADDRESS, USER_BIRTH, USER_GENDER, "
-				+ " USER_RECOMMENDER_ID " + "FROM TBL_USER U JOIN TBL_BOARD B " + "ON U.USER_ID = B.USER_ID";
-
+				+ " USER_RECOMMENDER_ID "
+				+ "FROM TBL_USER U JOIN TBL_BOARD B "
+				+ "ON U.USER_ID = B.USER_ID";
+		
+		
 		BoardDTO boardDTO = null;
 		ArrayList<BoardDTO> boards = new ArrayList<BoardDTO>();
 		int index = 0;
@@ -173,7 +175,7 @@ public class BoardDAO {
 		try {
 			preparedStatement = connection.prepareStatement(query);
 			resultSet = preparedStatement.executeQuery();
-			while (resultSet.next()) {
+			while(resultSet.next()) {
 				index = 0;
 				boardDTO = new BoardDTO();
 				boardDTO.setBoardId(resultSet.getLong(++index));
@@ -200,20 +202,40 @@ public class BoardDAO {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (resultSet != null) {
+				if(resultSet != null) {
 					resultSet.close();
 				}
-				if (preparedStatement != null) {
+				if(preparedStatement != null) {
 					preparedStatement.close();
 				}
-				if (connection != null) {
+				if(connection != null) {
 					connection.close();
 				}
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}
 		}
-
+		
 		return boards;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
