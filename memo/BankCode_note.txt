@@ -1,0 +1,346 @@
+package bank;
+
+public class Bank {
+	
+	private String name;
+	private String account;
+	private String phoneNumber;
+	private String password;
+	private int money;
+	
+	public Bank() {;}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public int getMoney() {
+		return money;
+	}
+
+	public void setMoney(int money) {
+		this.money = money;
+	}
+	
+//	입금
+	public void deposit(int money) {
+		this.money += money;
+	}
+	
+//	출금
+	public void withdraw(int money) {
+		this.money -= money;
+	}
+	
+//	잔액 조회
+	public int showBalance() {
+		return money;
+	}
+	
+//	계좌번호 중복검사
+	public static Bank checkAccount(Bank[][] arrBank, int[] arCount, String account) {
+		Bank bank = null;
+		for (int i = 0; i < arrBank.length; i++) {
+			int j = 0;
+			for (j = 0; j < arCount[i]; j++) {
+				if(arrBank[i][j].getAccount().equals(account)) {
+					bank = arrBank[i][j];
+					break;
+				}
+			}
+			if(j != arCount[i]) {break;}
+		}
+		return bank;
+	}
+	
+//	핸드폰 번호 중복 검사
+	public static Bank checkPhoneNumber(Bank[][] arrBank, int[] arCount, String phoneNumber) {
+		Bank bank = null;
+		for (int i = 0; i < arrBank.length; i++) {
+			int j = 0;
+			for (j = 0; j < arCount[i]; j++) {
+				if(arrBank[i][j].getPhoneNumber().equals(phoneNumber)) {
+					bank = arrBank[i][j];
+					break;
+				}
+			}
+			if(j != arCount[i]) {break;}
+		}
+		return bank;
+	}
+	
+//	로그인
+	public static Bank login(Bank[][] arrBank, int[] arCount, String account, String password) {
+		Bank user = checkAccount(arrBank, arCount, account);
+		if(user != null) {
+			if(user.getPassword().equals(password)) {
+				return user;
+			}
+		}
+		return null;
+	}
+}
+
+
+
+
+
+
+
+package bank;
+
+public class Kakao extends Bank{
+	
+	
+	@Override
+	public int showBalance() {
+		setMoney(getMoney() / 2);
+		return super.showBalance();
+	}
+
+}
+
+
+
+
+
+
+package bank;
+
+public class Kookmin extends Bank {
+	@Override
+	public void withdraw(int money) {
+		money *= 1.5;
+		super.withdraw(money);
+	}
+}
+
+
+
+
+
+package bank;
+
+public class Shinhan extends Bank {
+	@Override
+	public void deposit(int money) {
+		money *= 0.5;
+		super.deposit(money);
+	}
+}
+
+
+
+
+
+package bank;
+
+import java.util.Random;
+import java.util.Scanner;
+
+public class ATM {
+	public static void main(String[] args) {
+		Bank[][] arrBank = new Bank[3][100];
+		int[] arCount = new int[3];
+		Bank[] arBank = null;
+		
+		final int ACCOUNT_LENGTH = 6;
+		
+		String message = "1. 신한은행\n2. 국민은행\n3. 카카오뱅크\n4.나가기";
+//		계좌개설, 입금하기, 출금하기, 잔액조회, 계좌번호 찾기(새로운 계좌발급, 핸드폰 번호로 서비스 이용가능), 나가기
+		String menu = "1. 계좌개설\n2. 입금하기\n3. 출금하기\n4. 잔액조회\n5. 계좌번호 찾기\n6. 은행 다시 선택";
+		Scanner sc = new Scanner(System.in);
+		int index = 0, choice = 0, money = 0;
+		String account = "", phoneNumber = null, password = null;
+		Random random = new Random();
+		Bank user = null, userCheck = null;
+		
+		
+		while(true) {
+//			은행을 선택한다.
+			System.out.println(message);
+//			내일 강사님께 질문
+			index = sc.nextInt();
+			if(index == 4) {break;} // 나가기 눌렀을 때에는 while문 즉시 탈출!
+			index--; // 인덱스로 쓸 거라서 1을 빼준다.
+			
+			while(true) {
+				System.out.println(account);
+				System.out.println(menu);
+				choice = sc.nextInt();
+				if(choice == 6) {break;}
+				
+				if(choice == 1) { // 계좌 개설
+					arBank = new Bank[] {new Shinhan(), new Kookmin(), new Kakao()};
+					
+					while(true) {
+						for (int i = 0; i < ACCOUNT_LENGTH; i++) {
+							account += random.nextInt(10);
+						}
+						userCheck = Bank.checkAccount(arrBank, arCount, account);
+						if(userCheck == null) {break;}
+					}
+					user = arBank[index];
+					user.setAccount(account);
+					account = "";
+					
+					System.out.print("예금주: ");
+					user.setName(sc.next());
+					
+					while(true) {
+						System.out.print("핸드폰 번호['-' 제외]: ");
+						phoneNumber = sc.next();
+						
+						phoneNumber = phoneNumber.replaceAll("-", "");
+						if(phoneNumber.length() == 11) {
+							if(phoneNumber.startsWith("010")) {
+								userCheck = Bank.checkPhoneNumber(arrBank, arCount, phoneNumber);
+								if(userCheck == null) {
+									break;
+								}
+							}
+						}
+						System.out.println("잘못된 핸드폰 번호입니다.");
+					}
+					user.setPhoneNumber(phoneNumber);
+					
+					while(true) {
+						System.out.print("비밀번호[4자리]: ");
+						password = sc.next();
+						if(password.length() == 4) {
+							break;
+						}
+						System.out.println("비밀번호는 4자리로 설정해주세요.");
+					}
+					user.setPassword(password);
+					
+					arrBank[index][arCount[index]] = user;
+					arCount[index]++;
+					System.out.println("환영합니다 " + user.getName() +" 고객님, 계좌개설이 완료되었습니다.");
+					System.out.println("계좌번호: " + user.getAccount());
+					continue;
+					
+				}else if(choice == 5) { // 계좌번호 찾기
+					System.out.print("핸드폰 번호: ");
+					phoneNumber = sc.next();
+					
+					user = Bank.checkPhoneNumber(arrBank, arCount, phoneNumber);
+					
+					if(user != null) {
+						System.out.print("비밀번호: ");
+						password = sc.next();
+						
+						if(user.getPassword().equals(password)) {
+							while(true) {
+								for (int i = 0; i < ACCOUNT_LENGTH; i++) {
+									account += random.nextInt(10);
+								}
+								userCheck = Bank.checkAccount(arrBank, arCount, account);
+								if(userCheck == null) {break;}
+							}
+							System.out.println("새로운 계좌번호로 변경되었습니다.");
+							System.out.println("계좌번호: " + account);
+							user.setAccount(account);
+						}
+					}else {
+						System.out.println("없는 핸드폰 번호입니다.");
+					}
+					continue;
+				}
+				
+				System.out.print("계좌번호: ");
+				account = sc.next();
+				
+				System.out.print("비밀번호: ");
+				password = sc.next();
+				
+				user = Bank.login(arrBank, arCount, account, password);
+				
+				switch(choice) {
+				case 2: // 입금하기
+					if(user != null) {
+						System.out.print("입금액: ");
+						money = sc.nextInt();
+						if(money > 0) {
+							user.deposit(money);
+							System.out.println(money + "원 입금 완료");
+						}else {
+							System.out.println("입금액을 다시 확인해주세요.");
+						}
+					}else {
+						System.out.println("로그인 실패");
+					}
+					break;
+					
+				case 3: // 출금하기
+					if(user != null) {
+						System.out.print("출금액: ");
+						money = sc.nextInt();
+						if(money > 0) {
+							if(user.getMoney() >= (user instanceof Kookmin ? money * 1.5 : money)) {
+								user.withdraw(money);
+							}else {
+								System.out.println("출금액을 다시 확인해주세요.");
+							}
+						}
+					}else {
+						System.out.println("로그인 실패");
+					}
+					break;
+				case 4: // 잔액 조회
+					if(user != null) {
+						System.out.println("현재 잔액: " + user.showBalance());
+					}else {
+						System.out.println("로그인 실패");
+					}
+					break;
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,168 @@
+package threadTest;
+
+public class Thread1 extends Thread{ //Thread 클래스 상속
+//하나의 데이터를 외부에서 받아서 2개의 객체를 선언한 다음 객체별로 출력해야할 데이터를 출력할 수 있게
+멀티로 돌린다.
+	//받아야 할 데이터
+	public String data;
+	//기본 생성자
+	public Thread1() {;}
+	//초기화 생성자
+	public Thread1(String data) { //-> 외부에서 전달받은 이 데이터를 10번 출력 이것이
+					이것이 하나의 쓰레드
+		super();
+		this.data = data;
+	}
+	//Thread 안에 있는 run메소드 재정의
+	@Override
+	public void run() {
+		for (int i = 0; i < 10; i++) { //10번 출력하는 반복문
+			System.out.println(data);
+			try {sleep(1000);} catch (InterruptedException e) {;}
+			//Thread 상속을 받아서 어차피 내 필드에 있는 메소드이기 때문에 
+			//Thread.sleep 할 필요 없다
+			//부모필드 그대로 받은거
+		}
+	}
+}
+-> Thread1이라는 객체 하나가 하나의 쓰레드가 된다.
+-> run이라는 메소드가 재정의된 필드를 갖고 있는 객체가 Thread이고, Thread1은 Thread 객체가 된 것
+
+
+
+
+
+
+
+package threadTest;
+
+public class ThreadTest {
+	public static void main(String[] args) {
+		
+		//자원은 하나, 여러 개의 쓰레드
+		//자원의 수는 run이라는 메소드가 재정의된 객체의 개수
+//		Thread2 thread = new Thread2();
+		//Runnable thread = new Thread2(); 위와 같음
+		//부모타입			자식값 -> 업캐스팅
+		//thread는 타입이 3개다 Thread2, Runnable, Object
+		
+
+		//Thread2처럼 Runnable 인터페이스를 선언하지 않아도
+		//이렇게 익명메소드를 열어서 람다식으로 직접 구현할 수 있다
+		Runnable target = () -> { 
+		// ()는 run()인데 이름이 하나 밖에 없으니까 익명메소드로 구현 가능
+		// ()->{} ()이 메소드를 {}여기서 구현하는거니까
+		// ()이 메소드가 실행이 되면 {}여기 안에 있는 코드가 실행이 된다
+		// () -> {} - 할당된(구현된) 필드의 주소값
+		//여러 번 쓸 때는 이렇게 해야함
+		//한 번만 쓸 때는 Thread2 thread = () -> {}; 이렇게 해도 됨
+			for (int i = 0; i < 10; i++) {
+				System.out.println(Thread.currentThread().getName());
+				try {Thread.sleep(500);} catch (InterruptedException e) {;}
+			}
+		};
+		
+		//Thread를 상속받은 적이 없기 때문에 start 못 씀
+		//그래서 Thread 객체를 직접 객체화 해준다
+//		Thread t1 = new Thread(target, "?"); //이름을 전달한다
+//		Thread t2 = new Thread(target, "!");
+		//currentThread에 접근한 각각의 이름들이 출력이 된다
+//		
+
+		//멀티쓰레드로 2개의 자원을 구현
+//		t2.start();
+//		
+//		try {t2.join();} catch (InterruptedException e) {;}
+		//t2를 먼저 실행시킨다(다른 자원은 t2 끝날 때까지 실행 x)
+		//처리 경로가 위에서 아래로이기 때문에 start를 위에 두고 join을 걸면 안걸린다
+		//t2.start() t2.join() t1.start() 순으로 해야 t2가 끝날 때까지 t1이 wait 상태		
+//		t1.start();
+		//t2에 join을 걸어놨으므로 t1이 끝나면 t2가 실행된다	
+	
+//		System.out.println("안녕");
+		
+
+		//2개의 쓰레드로 메모리에 할당
+		Thread1 t1 = new Thread1("♥");
+		Thread1 t2 = new Thread1("★");
+		//t1과 t2에는 재정의된 메소드 run이 있다.		
+
+		//start()는 Thread의 객체
+		//Thread에 있는 것을 재정의했기 때문에 t1과 t2 객체에 있는 run이
+		//우리가 만든 run으로 start가 된다
+		t1.start();
+		t2.start();
+		//하나하나 같이 실행된다 -> 멀티쓰레드
+		//그런데 속도가 너무 빨라서 섞여서 출력된다
+		//이럴땐 Thread.sleep으로 속도를 늦춰서 확인할 수 있다 -> try-catch 잡아줘야함
+		//♥★ ★♥ ♥★ ★♥ ★♥ -> 그래도 순서가 일정하진 않다
+		
+//		t1.run();
+//		t2.run();
+		//t1.run()을 하고 t2.run()을 하면 t1 10번 출력이 끝나야 t2가 10번 출력한다
+		//-> 단일 쓰레드
+		//스케줄링 작업을 안해줬기 때문에 단일쓰레드로 처리한다.
+		//스케줄링을 해주는 메소드는 start()라는 메소드
+		//start()는 우리가 재정의한 객체를 전달했을 때, 멀티쓰레드로 스케줄링을 해준다
+		//run()을 재정의했다고 run()을 쓰면 메인 쓰레드에서 단일 쓰레드로 쓰고 있는 것
+		//즉, start()라는 메소드를 통해서 실행을 시켜줘야 멀티쓰레드로 등록이 된다
+
+
+	}
+}
+
+
+
+
+
+package threadTest;
+
+public class Thread2 implements Runnable{ //Runnable 인터페이스 상속
+	//강제성이 있기 때문에 반드시 run을 재정의 해야한다
+	//Runnable엔 run 밖에 없다. 
+	//Runnable은 함수형 인터페이스 -> run 구현할 때 람다 쓸 수 있음
+
+	@Override //여러 객체에서 여길 접근해서 쓸 수 있다
+	//Thread 용어에서 이 run을 '자원'이라고 한다
+	//이 자원에 여러 쓰레드들이 접근해서 이 자원을 소모하는 것
+	//이 안에 있는 자원을 다 써야만 탈출할 수 있다
+	public void run() {
+		//이 자원에 접근한 객체의 이름을 10번 출력
+		for (int i = 0; i < 10; i++) {
+			System.out.println(Thread.currentThread().getName());
+			//currentThread -> Thread에서 이 자원에 접근한 static 메소드를 가져올 수 있다
+			//Thread.currentThread는 Thread 객체
+			//Thread 객체는 각 쓰레드 별로 이름을 줄 수 있음
+			//-> Thread에는 이름을 전달하는 생성자가 있다
+			//이 생성자는 super()로 접근하면 된다
+			//그런데 Runnable은 Thread를 상속받은 적이 없다(Thread의 자식이 아님)
+			//이 자원에 접근한 쓰레드 객체의 이름을 getName()으로 가져와야한다
+			try {Thread.sleep(500);} catch (InterruptedException e) {;}
+			//Thread를 받은 적이 없으므로 Thread.sleep으로 해줘야함
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

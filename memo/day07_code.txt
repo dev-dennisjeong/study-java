@@ -1,0 +1,163 @@
+package castingTest;
+
+// 넷플릭스
+// 애니메이션, 영화, 드라마, 클래스 선언
+// 사용자가 선택한 영상이 
+// 애니메이션이라면 "자막지원"기능 사용
+// 영화라면 "4D"기능 사용
+// 드라마라면 "굿즈"기능 사용
+public class CastingTask {
+	
+	public void checkVideo(Video video) {
+		 if(video instanceof Animation) {
+	         Animation animation = (Animation) video;
+	         animation.turnSubtitle();
+	      }else if(video instanceof Film) {
+	         Film film = (Film) video;
+	         film.fourDX();
+	      }else if(video instanceof Drama) {
+	         Drama drama = (Drama) video;
+	         drama.sellGoods();
+	      }
+
+	}
+	
+	public static void main(String[] args) {
+		 Video[] videos = {
+		            new Animation(),
+		            new Film(),
+		            new Drama()
+		      };
+		      CastingTask castingTask = new CastingTask();
+		      
+		      for (int i = 0; i < videos.length; i++) {
+		         castingTask.checkVideo(videos[i]);
+		      }
+
+	}
+}
+
+
+
+
+package castingTest;
+
+class Car{
+	void engineStart() {
+		System.out.println("열쇠로 시동 킴");
+	}
+	
+}
+
+class SuperCar extends Car{
+
+	@Override
+	void engineStart() {
+		System.out.println("음성으로 시동 킴");
+	}
+	
+	void openRoof() {
+		System.out.println("지붕 열기");
+	}
+	
+}
+
+public class CastingTest extends Car{
+	public static void main(String[] args) {
+		Car matiz = new Car();
+		SuperCar ferrari = new SuperCar();
+//		up casting
+		Car noOptionFerrari = new SuperCar();
+//		SuperCar brokenFerrari = (SuperCar)new Car();
+		
+//		down casting
+		SuperCar fullOptionFerrarai = (SuperCar)noOptionFerrari;
+		
+//      matiz instanceof Car : true
+      System.out.println(matiz instanceof Car);
+      
+//      matiz instanceof SuperCar : false
+      System.out.println(matiz instanceof SuperCar);
+      
+//      ferrari instanceof Car : true
+      System.out.println(ferrari instanceof Car);
+      
+//      ferrari instanceof SuperCar : true
+      System.out.println(ferrari instanceof SuperCar);
+      
+//      noOptionFerrari instanceof Car : true
+      System.out.println(noOptionFerrari instanceof Car);
+      
+//      noOptionFerrari instanceof SuperCar : true
+      System.out.println(noOptionFerrari instanceof SuperCar);
+      
+//      fullOptionFerrari instanceof Car : true
+//      System.out.println(fullOptionFerrari instanceof Car);
+      
+//      fullOptionFerrari instanceof SuperCar : true
+//      System.out.println(fullOptionFerrari instanceof SuperCar);
+
+	}
+}
+
+
+
+
+package castingTest;
+
+public class Animation extends Video{
+	
+	void turnSubtitle(){
+		System.out.println("자막지원");
+	}
+}
+
+
+
+
+
+package castingTest;
+
+public class Drama extends Video{
+
+	void sellGoods() {
+		System.out.println("굿즈기능");
+	}
+}
+
+
+
+
+
+
+package castingTest;
+
+public class Film extends Video{
+
+	void fourDX() {
+		System.out.println("4D 기능");
+	}
+}
+
+
+
+
+
+package castingTest;
+
+public class Video {
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
